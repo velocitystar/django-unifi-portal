@@ -1,78 +1,43 @@
+from random import randint
 from django import forms
-from django.forms import ModelForm
 from django.template import Template
-from django.contrib.auth.forms import User
-from django.contrib.auth.forms import AuthenticationForm
+from django.forms import Form
+from django.contrib.auth.models import User
+from django.contrib.auth import authenticate
 
-from material import Layout, Row, Fieldset
-from . import form_mixin as forms
 
-class UnifiLoginForm(AuthenticationForm):
-    #ATTENZIONE: maschero la username con la email
-    username = forms.EmailField(label="Email Address", required=True)
-    password = forms.CharField(widget=forms.PasswordInput)
+PASSWORD = "PASSWORD"
+
+
+class UnifiLoginForm(Form):
+    email = forms.EmailField(label="Email Address", required=True)
 
     template = Template("""
     {% form %}
-        {% part form.username prefix %}<i class="material-icons prefix">email</i>{% endpart %}
-        {% part form.password prefix %}<i class="material-icons prefix">lock</i>{% endpart %}
+        {% part form.email prefix %}<i class="material-icons prefix">email</i>{% endpart %}
     {% endform %}
     """)
 
-    social_buttons = Template("""
-        <p style="text-align:center"><a href="/auth/login/facebook" class="waves-effect waves-light btn-large blue"><i class="fa fa-facebook" aria-hidden="true"></i> Sign in with facebook</a></p>
-        <br>
-    """)
-
     buttons = Template("""
-        <a href="{% url 'unifi_registration' %}" class="waves-effect waves-teal btn-flat">Register</a>
         <button class="waves-effect waves-light btn" type="submit">Login</button>
     """)
 
 
     title = "Unifi Login"
 
-class UnifiRegistrationForm(ModelForm):
-    username = forms.EmailField(label="Email Address")
-    #email = forms.EmailField(label="Email Address")
-    password = forms.CharField(widget=forms.PasswordInput)
-    password_confirm = forms.CharField(widget=forms.PasswordInput, label="Confirm password")
-    first_name = forms.CharField(required=True)
-    last_name = forms.CharField(required=True)
-    phone = forms.CharField(required=True)
-    gender = forms.ChoiceField(choices=((None, ''), ('F', 'Female'), ('M', 'Male'), ('O', 'Other')))
-    receive_news = forms.BooleanField(required=False, label='I want to receive news and special offers')
-    agree_toc = forms.BooleanField(required=True, label='I agree with the Terms and Conditions')
+    def clean(self):
+        email = self.cleaned_data.get('email')
+        user = User.objects.filter(email=email).first()
+        if user:
+            username = user.username
+            self.user = authenticate(self.request, username=username, password=PASSWORD)
+        else:
+            username = email if len(email) < 30 else email[:25] + str(randint(10000, 99999))
+            self.user = User.objects.create(email=email, username=username)
+            self.user.set_password(PASSWORD)
+            self.user.save()
+            self.user = authenticate(self.request, username=username, password=PASSWORD)
+        return self.cleaned_data
 
-    layout = Layout('username',
-                    Row('password', 'password_confirm'),
-                    Fieldset('Personal details',
-                             Row('first_name', 'last_name'),
-                             'phone',
-                             'gender', 'receive_news', 'agree_toc'))
-
-    template = Template("""
-    {% form %}
-        {% part form.username prefix %}<i class="material-icons prefix">email</i>{% endpart %}
-        {% part form.password prefix %}<i class="material-icons prefix">lock_open</i>{% endpart %}
-        {% part form.password_confirm prefix %}<i class="material-icons prefix">lock_open</i>{% endpart %}
-
-        {% part form.first_name prefix %}<i class="material-icons prefix">account_box</i>{% endpart %}
-        {% part form.last_name prefix %}<i class="material-icons prefix">account_box</i>{% endpart %}
-        {% part form.phone prefix %}<i class="material-icons prefix">phone</i>{% endpart %}
-        {% part form.gender prefix %}<i class="material-icons prefix">people</i>{% endpart %}
-    {% endform %}
-    """)
-
-    #Sign in button to allow user to navigate back to Login form from registration form
-    buttons = Template("""
-        <a href="{% url 'unifi_login' %}" class="waves-effect waves-teal btn-flat">Sign in</a>
-        <button class="waves-effect waves-light btn" type="submit">Login</button>
-    """)
-
-
-    title = "Registration"
-
-    class Meta:
-        model = User
-        fields = ['first_name', 'last_name', 'username', 'password']
+    def get_user(self):
+        return self.user

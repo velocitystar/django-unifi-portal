@@ -1,6 +1,9 @@
 {% extends 'base.html' %}
 
 {% block extrahead %}
+<title>{% block title %}Wifi Portal{% endblock %}</title>
+<link href="data:image/x-icon;base64,AAABAAEAEBAAAAEAIABoBAAAFgAAACgAAAAQAAAAIAAAAAEAIAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAzMzNAMzMzQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAzMzMSMzMz+zMzM/szMzMSAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMzMzAjMzM6EzMzOhMzMzAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAzMzM8MzMz4zMzM2IzMzMCMzMzAjMzM2IzMzPlMzMzPAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMzMzNjMzM/kzMzP/MzMz6TMzM+kzMzP/MzMz+TMzMzgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAzMzMkMzMzlTMzMx4zMzM0MzMztzMzM/UzMzP1MzMztzMzMzQzMzMeMzMzlTMzMyQAAAAAAAAAAAAAAAAAAAAAMzMzYjMzM/8zMzPpMzMzYDMzMwgAAAAAAAAAADMzMwgzMzNgMzMz6TMzM/8zMzNiAAAAAAAAAAAzMzMKMzMzRjMzMwQzMzOJMzMz/TMzM/8zMzP1MzMzzTMzM80zMzP1MzMz/zMzM/0zMzOJMzMzBDMzM0YzMzMKMzMzdDMzM/8zMzOvMzMzEDMzMzIzMzOhMzMz6TMzM/8zMzP/MzMz6TMzM6EzMzMwMzMzEDMzM68zMzP/MzMzdDMzMxwzMzPVMzMz/zMzM+czMzNwMzMzFAAAAAAzMzMMMzMzDAAAAAAzMzMWMzMzcjMzM+kzMzP/MzMz0zMzMxwAAAAAMzMzDDMzM5UzMzP7MzMz/zMzM/0zMzPVMzMztzMzM7czMzPVMzMz/TMzM/8zMzP7MzMzlTMzMwwAAAAAAAAAAAAAAAAAAAAAMzMzJDMzM4szMzPXMzMz/TMzM/8zMzP/MzMz/TMzM9czMzOLMzMzJAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADMzMwozMzMgMzMzIDMzMwoAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA//8AAP//AAD//wAA/n8AAP5/AAD73wAA+B8AAOw3AADn5wAA4AcAAJgZAACP8QAAwAMAAPAPAAD//wAA//8AAA==" rel="icon" type="image/x-icon" />
+
 <style type="text/css">
   @media only screen and (min-width : 601px) {
       #id_card_type_container {
@@ -16,13 +19,14 @@
     <div class="{% block formclass %}col s12 m8 offset-m2 l8 offset-l2{% endblock %}">
         <div class="card">
             <form method="POST" enctype="multipart/form-data">
-                <div class="card-content">
+                <div class="card-content" style="padding-bottom: 0px">
                     <span class="card-title grey-text text-darken-2">{% block formtitle %}Form{% endblock %}</span>
                     {% csrf_token %}
                     {% block formbody %}{% endblock %}
                 </div>
-                <div class="card-action">
+                <div class="card-action" style="padding-left:28px;padding-top:0px">
                     {% block actions %}
+                    {% block button_text %} {% endblock %}
                     <div class="right-align">
                         {% block formbuttons %}<button class="btn btn-primary" type="submit">Submit</button>{% endblock %}
                     </div>

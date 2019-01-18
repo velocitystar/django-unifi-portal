@@ -24,7 +24,7 @@ SECRET_KEY = '+%q=^7@2k2ipohgguyw@08=2#f#^my&$(3l7+2^l(42nuq-95+'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # When debug is False /static will no logner be served by Django. You will need to serve it with Apahce/Nginx
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -37,8 +37,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    #
-    'unifi',
 ]
 
 MIDDLEWARE = [
@@ -49,7 +47,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'social_django.middleware.SocialAuthExceptionMiddleware',
 ]
 
 ROOT_URLCONF = 'demo_unifi_portal.urls'
@@ -129,13 +126,11 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media').replace('\\', '/')
 #################################################
 #                 UNIFI CONFIGURATION           #
 #################################################
-from unifi_settings import *
-from unifi_secret import *
+from .unifi_settings import *
 
 INSTALLED_APPS += UNIFI_INSTALLED_APPS
 
 LOGIN_URL = UNIFI_LOGIN_URL
-LOGIN_REDIRECT_URL = UNIFI_LOGIN_REDIRECT_URL
 
 TEMPLATES[0]['OPTIONS']['context_processors'] += UNIFI_TEMPLATE_CONTEXT_PROCESSORS
 
@@ -153,6 +148,3 @@ except ImportError:
     ]
 
 AUTHENTICATION_BACKENDS = UNIFI_AUTHENTICATION_BACKENDS
-SOCIAL_AUTH_PIPELINE = UNIFI_SOCIAL_AUTH_PIPELINE
-#When DEBUG = True Social Auth exception handling to redirected url is disabled
-SOCIAL_AUTH_LOGIN_ERROR_URL = '/guest/s/default/'

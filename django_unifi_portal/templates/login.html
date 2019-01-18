@@ -6,6 +6,8 @@
 <style type="text/css">
     {{ form.css }}
 </style>
+<title>{% block title %}Wifi Portal{% endblock %}</title>
+<link href="data:image/x-icon;base64,AAABAAEAEBAAAAEAIABoBAAAFgAAACgAAAAQAAAAIAAAAAEAIAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAzMzNAMzMzQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAzMzMSMzMz+zMzM/szMzMSAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMzMzAjMzM6EzMzOhMzMzAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAzMzM8MzMz4zMzM2IzMzMCMzMzAjMzM2IzMzPlMzMzPAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMzMzNjMzM/kzMzP/MzMz6TMzM+kzMzP/MzMz+TMzMzgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAzMzMkMzMzlTMzMx4zMzM0MzMztzMzM/UzMzP1MzMztzMzMzQzMzMeMzMzlTMzMyQAAAAAAAAAAAAAAAAAAAAAMzMzYjMzM/8zMzPpMzMzYDMzMwgAAAAAAAAAADMzMwgzMzNgMzMz6TMzM/8zMzNiAAAAAAAAAAAzMzMKMzMzRjMzMwQzMzOJMzMz/TMzM/8zMzP1MzMzzTMzM80zMzP1MzMz/zMzM/0zMzOJMzMzBDMzM0YzMzMKMzMzdDMzM/8zMzOvMzMzEDMzMzIzMzOhMzMz6TMzM/8zMzP/MzMz6TMzM6EzMzMwMzMzEDMzM68zMzP/MzMzdDMzMxwzMzPVMzMz/zMzM+czMzNwMzMzFAAAAAAzMzMMMzMzDAAAAAAzMzMWMzMzcjMzM+kzMzP/MzMz0zMzMxwAAAAAMzMzDDMzM5UzMzP7MzMz/zMzM/0zMzPVMzMztzMzM7czMzPVMzMz/TMzM/8zMzP7MzMzlTMzMwwAAAAAAAAAAAAAAAAAAAAAMzMzJDMzM4szMzPXMzMz/TMzM/8zMzP/MzMz/TMzM9czMzOLMzMzJAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADMzMwozMzMgMzMzIDMzMwoAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA//8AAP//AAD//wAA/n8AAP5/AAD73wAA+B8AAOw3AADn5wAA4AcAAJgZAACP8QAAwAMAAPAPAAD//wAA//8AAA==" rel="icon" type="image/x-icon" />
 {% endblock %}
 
 {% block formclass %}{{ form.blockclass|default:"col s12 m8 offset-m2 l8 offset-l2" }}{% endblock %}
@@ -14,30 +16,32 @@
 
 {% block formbody %}
 
-    <p style="text-align:center"> <img src="{{ logo }}">  </p>
+    <p style="text-align:center"> <img src="{% static 'img/DjangoUniFi.png' %}">  </p>
     <br>
 
     <div style='text-align:center;margin-bottom: 30px'>
-        <h6>Welcome to <b>{{ ssid }}</b> free WIFI</h6>
-        <h6>If you have Facebook or a registered account, login below.</h6>
+        <h6>Welcome</h6>
+        <h6>Please enter your email address for Free WIFI</h6>
+    </div>
+    {% include form.template %}
+{% endblock %}
+
+{% block button_text %}
+    <div class="form-check" style="padding-bottom:30px;">
+        <label>
+            <input type="checkbox" required />
+            <span>Check Here to Agree to Our
+                <a target="_blank" href="https://1wy.biz/tos">
+                    Terms Of Service and Privacy Policy
+                </a>
+            </span>
+        </label>
     </div>
 
-
-    {% include form.social_buttons %}
-
-    <h5 style="text-align:center">or</h5>
-
-    {% include form.template %}
 {% endblock %}
 
 {% block formbuttons %}
 
     {% include form.buttons %}
-
-    <div class="row left-align" style="margin-top:10px">
-        <div class="ol s12 required" id="id_terms_accepted_container">
-            <label>If you click "Log in with Facebook" and are not a user, you will be registered and you agree to Terms & Conditions and Privacy Policy.</label>
-        </div>
-    </div>
 
 {% endblock %}

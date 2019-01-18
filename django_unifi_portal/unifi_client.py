@@ -19,26 +19,26 @@ class UnifiClient(object):
 
         self.version = settings.UNIFI_VERSION
         self.site_id = settings.UNIFI_SITE_ID
-        self.__unifiUser = settings.UNIFI_USER
-        self.__unifiPass = settings.UNIFI_PASSWORD
-        self.__unifiServer = settings.UNIFI_SERVER
-        self.__unifiPort = settings.UNIFI_PORT
+        self._unifiUser = settings.UNIFI_USER
+        self._unifiPass = settings.UNIFI_PASSWORD
+        self._unifiServer = settings.UNIFI_SERVER
+        self._unifiPort = settings.UNIFI_PORT
 
-        self.__cookie_file = "/tmp/unifi_cookie"
+        self._cookie_file = "/tmp/unifi_cookie"
 
         # Use a Session object to handle cookies.
-        self.__session = requests.Session()
-        cj = cookielib.LWPCookieJar(self.__cookie_file)
+        self._session = requests.Session()
+        cj = cookielib.LWPCookieJar(self._cookie_file)
 
         # Load existing cookies (file might not yet exist)
         try:
             cj.load()
         except:
             pass
-        self.__session.cookies = cj
+        self._session.cookies = cj
 
         # Use an SSLAdapter to work around SSL handshake issues.
-        self.__session.mount(self._get_resource_url(), SSLAdapter(ssl.PROTOCOL_SSLv23))
+        self._session.mount(self._get_resource_url(), SSLAdapter(ssl.PROTOCOL_SSLv23))
 
         pass
 
@@ -46,12 +46,12 @@ class UnifiClient(object):
         """ Take path_name parameter and return a valid formatted URL for a unifi resource. """
         if path_name:
             # Return a URL for a specific resource
-            url = str.format('{0}{1}:{2}/{3}', 'https://', self.__unifiServer, '8443', path_name)
+            url = str.format('{0}{1}:{2}/{3}', 'https://', self._unifiServer, '8443', path_name)
             logger.debug('URL: {0}'.format(url))
             return url
         else:
-            url = str.format('{0}{1}:{2}/', 'https://', self.__unifiServer, '8443')
-            return url;
+            url = str.format('{0}{1}:{2}/', 'https://', self._unifiServer, '8443')
+            return url
 
     def _is_authorized(self, guest_mac):
         """Return true if the guest is already authorized."""
@@ -60,7 +60,7 @@ class UnifiClient(object):
             api_version = 'api/s/' + self.site_id + '/'
 
         api_url = self._get_resource_url(api_version + 'stat/sta')
-        clients_response = self.__session.post(api_url)
+        clients_response = self._session.post(api_url)
         client_list=json.loads(clients_response.text)['data']
 
         #Find the client who hat this mac address
@@ -73,8 +73,8 @@ class UnifiClient(object):
     def login_on_unifi_server(self):
         """ Log into the API unifi server """
         data = {
-            'username': self.__unifiUser,
-            'password': self.__unifiPass
+            'username': self._unifiUser,
+            'password': self._unifiPass
         }
 
         login_version = 'login'
@@ -82,7 +82,7 @@ class UnifiClient(object):
             login_version = 'api/login'
 
         login_url = self._get_resource_url(login_version)
-        login_response = self.__session.post(login_url, data=json.dumps(data), verify=False)
+        login_response = self._session.post(login_url, data=json.dumps(data), verify=False)
 
 
         return login_response.status_code
@@ -100,18 +100,19 @@ class UnifiClient(object):
             'cmd': 'authorize-guest',
             'mac': guest_mac,
             'minutes': minutes,
+            'ap_mac': ap_mac,
         }
 
         if self.version == 'v3' or self.version == 'v4' or self.version == 'v5':
             api_version = 'api/s/' + self.site_id + '/'
 
         api_url = self._get_resource_url(api_version + 'cmd/stamgr')
-        auth_response = self.__session.post(api_url, data=json.dumps(auth))
+        auth_response = self._session.post(api_url, data=json.dumps(auth))
 
-        print "***** UNIFI AUTH RESPONSE *****"
-        print api_url
-        print auth_response
-        print "*******************************"
+        print("***** UNIFI AUTH RESPONSE *****")
+        print(api_url)
+        print(auth_response)
+        print("*******************************")
 
         return auth_response.status_code
 
@@ -131,20 +132,19 @@ class UnifiClient(object):
             api_version = 'api/s/' + self.site_id + '/'
 
         api_url = self._get_resource_url(api_version + 'cmd/stamgr')
-        auth_response = self.__session.post(api_url, data=json.dumps(unauth))
+        auth_response = self._session.post(api_url, data=json.dumps(unauth))
         return auth_response.status_code
 
     def logout_from_unifi_server(self):
         """ Log out from the API. """
         logout_url = self._get_resource_url('logout')
-        logout_response = self.__session.get(logout_url, timeout=5)
+        logout_response = self._session.get(logout_url, timeout=5)
         return logout_response.status_code
 
     def send_authorization(self, guest_mac, ap_mac, minutes):
         """ Login on Unifi Server and authorize a guest based on his MAC address"""
-        self.login_on_unifi_server();
+        self.login_on_unifi_server()
 
-        status_code = -1;
         if not self._is_authorized(guest_mac):
             status_code = self.authorize_guest(guest_mac=guest_mac,
                                                minutes=minutes,
