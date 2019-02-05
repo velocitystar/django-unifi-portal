@@ -56,7 +56,7 @@ class UserAuthorizeView(TemplateView):
         status_code = unifi_client.send_authorization(_mac, _ap, _t)
         if status_code != 200:
             context['Unauthorized'] = True
-        time.sleep(5)
+        time.sleep(3)
         return context
 
     def post(self, request, *args, **kwargs):
