@@ -88,7 +88,6 @@ class UnifiUserLogin(FormView):
     redirect_field_name = REDIRECT_FIELD_NAME
 
     def get_form(self, form_class=None):
-        print('get_form?')
         form = super(UnifiUserLogin, self).get_form(form_class)
         form.request = self.request
         return form
